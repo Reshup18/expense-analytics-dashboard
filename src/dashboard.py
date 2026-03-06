@@ -10,43 +10,60 @@ uploaded_file = st.file_uploader("Upload Expense CSV", type=["csv"])
 
 if uploaded_file is not None:
 
-    data = pd.read_csv(uploaded_file)
-    data["date"] = pd.to_datetime(data["date"])
+    try:
+        data = pd.read_csv(uploaded_file)
 
-    st.subheader("Raw Data")
-    st.write(data)
+        required_columns = {"date", "category", "amount"}
 
-    categories = data["category"].unique()
-    selected_category = st.selectbox("Select Category", categories)
+        if not required_columns.issubset(data.columns):
+            st.error("CSV must contain: date, category, amount")
+        else:
 
-    filtered_data = data[data["category"] == selected_category]
+            data["date"] = pd.to_datetime(data["date"])
 
-    st.subheader("Filtered Data")
-    st.write(filtered_data)
+            st.subheader("Raw Data")
+            st.dataframe(data)
 
-    st.subheader("Category Spending")
+            categories = data["category"].unique()
 
-    cat_data = category_spending(data)
+            selected_category = st.selectbox(
+                "Select Category", categories
+            )
 
-    fig, ax = plt.subplots()
-    cat_data.plot(kind="bar", ax=ax)
+            filtered_data = data[data["category"] == selected_category]
 
-    st.pyplot(fig)
+            st.subheader("Filtered Data")
+            st.dataframe(filtered_data)
 
-    st.subheader("Daily Spending")
+            st.subheader("Category Spending")
 
-    daily = daily_spending(filtered_data)
+            cat_data = category_spending(data)
 
-    fig2, ax2 = plt.subplots()
-    daily.plot(ax=ax2)
+            fig, ax = plt.subplots()
+            cat_data.plot(kind="bar", ax=ax)
+            ax.set_ylabel("Amount")
 
-    st.pyplot(fig2)
+            st.pyplot(fig)
 
-    st.subheader("Monthly Spending")
+            st.subheader("Daily Spending")
 
-    monthly = monthly_spending(data)
+            daily = daily_spending(filtered_data)
 
-    fig3, ax3 = plt.subplots()
-    monthly.plot(kind="bar", ax=ax3)
+            fig2, ax2 = plt.subplots()
+            daily.plot(ax=ax2)
+            ax2.set_ylabel("Amount")
 
-    st.pyplot(fig3)
+            st.pyplot(fig2)
+
+            st.subheader("Monthly Spending")
+
+            monthly = monthly_spending(data)
+
+            fig3, ax3 = plt.subplots()
+            monthly.plot(kind="bar", ax=ax3)
+            ax3.set_ylabel("Amount")
+
+            st.pyplot(fig3)
+
+    except Exception as e:
+        st.error(f"Error processing file: {e}")
