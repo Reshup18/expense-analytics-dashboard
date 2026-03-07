@@ -60,10 +60,22 @@ if uploaded_file is not None:
             st.subheader("Filtered Data")
             st.dataframe(filtered_data)
 
+            
+
             # Category Spending
             st.subheader("Category Spending")
 
             cat_data = category_spending(filtered_date_data)
+
+            #Insights Calculation  
+            top_category = cat_data.idxmax()
+            top_amount = cat_data.max()
+
+            avg_daily_spending = filtered_date_data.groupby("date")["amount"].sum().mean()
+
+            st.subheader("Top Financial Insights")
+            st.write(f"Highest Spending Category: **{top_category} ₹{top_amount:.2f}**")
+            st.write(f"Average Daily Spending: **₹{avg_daily_spending:.2f}**")
 
             fig, ax = plt.subplots()
             cat_data.plot(kind="bar", ax=ax)
