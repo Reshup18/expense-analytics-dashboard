@@ -22,6 +22,16 @@ if uploaded_file is not None:
 
             data["date"] = pd.to_datetime(data["date"])
 
+            st.subheader("Filter by Date")
+
+            start_date = st.date_input("Start Date", value=data["date"].min())
+            end_date = st.date_input("End Date", value=data["date"].max())
+
+            filtered_date_data = data[
+                (data["date"] >= pd.to_datetime(start_date)) &
+                (data["date"] <= pd.to_datetime(end_date))
+            ]
+
             # KPI Calculations
             total_spending = data["amount"].sum()
             avg_spending = data["amount"].mean()
@@ -53,7 +63,7 @@ if uploaded_file is not None:
             # Category Spending
             st.subheader("Category Spending")
 
-            cat_data = category_spending(data)
+            cat_data = category_spending(filtered_date_data)
 
             fig, ax = plt.subplots()
             cat_data.plot(kind="bar", ax=ax)
@@ -61,7 +71,7 @@ if uploaded_file is not None:
 
             st.pyplot(fig)
 
-               #Pie Chart for Spending Distribution
+            #Pie Chart for Spending Distribution
             st.subheader("Spending Distribution")
             fig_pie, ax_pie = plt.subplots()
             cat_data.plot(kind = "pie" , autopct = "%1.1f%%" , ax = ax_pie) 
@@ -71,7 +81,7 @@ if uploaded_file is not None:
             # Daily Spending
             st.subheader("Daily Spending")
 
-            daily = daily_spending(filtered_data)
+            daily = daily_spending(filtered_date_data)
 
             fig2, ax2 = plt.subplots()
             daily.plot(ax=ax2)
@@ -82,7 +92,7 @@ if uploaded_file is not None:
             # Monthly Spending
             st.subheader("Monthly Spending")
 
-            monthly = monthly_spending(data)
+            monthly = monthly_spending(filtered_date_data)
 
             fig3, ax3 = plt.subplots()
             monthly.plot(kind="bar", ax=ax3)
