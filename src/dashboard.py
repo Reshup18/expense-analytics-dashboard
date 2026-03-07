@@ -61,6 +61,13 @@ if uploaded_file is not None:
 
             st.pyplot(fig)
 
+               #Pie Chart for Spending Distribution
+            st.subheader("Spending Distribution")
+            fig_pie, ax_pie = plt.subplots()
+            cat_data.plot(kind = "pie" , autopct = "%1.1f%%" , ax = ax_pie) 
+            ax_pie.set_ylabel("")
+            st.pyplot(fig_pie)  
+
             # Daily Spending
             st.subheader("Daily Spending")
 
