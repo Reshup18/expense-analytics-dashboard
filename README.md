@@ -7,6 +7,19 @@ The Expense Analytics Dashboard is an interactive data analytics application tha
 The application processes financial data using Python and Pandas and presents insights using dynamic visualizations built with Streamlit.
 
 ---
+## Dashboard Preview
+
+### Overview
+
+![Dashboard Overview](images/dashboard_overview.png)
+
+### Spending Distribution
+
+![Spending Distribution](images/spending_distribution.png)
+
+### Date Range Analysis
+
+![Date Filter Analysis](images/date_filter_analysis.png)
 
 ## Features
 
