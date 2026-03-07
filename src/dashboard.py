@@ -17,24 +17,40 @@ if uploaded_file is not None:
 
         if not required_columns.issubset(data.columns):
             st.error("CSV must contain: date, category, amount")
+
         else:
 
             data["date"] = pd.to_datetime(data["date"])
+
+            # KPI Calculations
+            total_spending = data["amount"].sum()
+            avg_spending = data["amount"].mean()
+            transactions = len(data)
+            highest_day = data.groupby("date")["amount"].sum().idxmax()
+
+            # KPI Display
+            st.subheader("Key Financial Insights")
+
+            col1, col2, col3, col4 = st.columns(4)
+
+            col1.metric("Total Spending", f"₹{total_spending:.2f}")
+            col2.metric("Average Transaction", f"₹{avg_spending:.2f}")
+            col3.metric("Total Transactions", transactions)
+            col4.metric("Highest Spending Day", str(highest_day.date()))
 
             st.subheader("Raw Data")
             st.dataframe(data)
 
             categories = data["category"].unique()
 
-            selected_category = st.selectbox(
-                "Select Category", categories
-            )
+            selected_category = st.selectbox("Select Category", categories)
 
             filtered_data = data[data["category"] == selected_category]
 
             st.subheader("Filtered Data")
             st.dataframe(filtered_data)
 
+            # Category Spending
             st.subheader("Category Spending")
 
             cat_data = category_spending(data)
@@ -45,6 +61,7 @@ if uploaded_file is not None:
 
             st.pyplot(fig)
 
+            # Daily Spending
             st.subheader("Daily Spending")
 
             daily = daily_spending(filtered_data)
@@ -55,6 +72,7 @@ if uploaded_file is not None:
 
             st.pyplot(fig2)
 
+            # Monthly Spending
             st.subheader("Monthly Spending")
 
             monthly = monthly_spending(data)
